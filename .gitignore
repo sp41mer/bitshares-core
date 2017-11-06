@@ -39,5 +39,7 @@ programs/witness_node/object_database/*
 
 object_database/*
 
+.idea
+
 *.pyc
 *.pyo
