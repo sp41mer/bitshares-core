@@ -45,7 +45,7 @@ void new_chain_banner( const graphene::chain::database& db )
       "********************************\n"
       "*                              *\n"
       "*   ------- NEW CHAIN ------   *\n"
-      "*   - Welcome to RighCoin! -   *\n"
+      "*   - Welcome to RightCoin! -   *\n"
       "*   ------------------------   *\n"
       "*                              *\n"
       "********************************\n"
