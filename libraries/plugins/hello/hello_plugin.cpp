@@ -1,76 +1,74 @@
-//
-// Created by Alexander Sukhanov on 11/11/17.
-//
-
 #include <graphene/hello/hello_api.hpp>
 #include <graphene/hello/hello_plugin.hpp>
+
 #include <string>
 
-namespace graphene {
-    namespace hello_plugin {
+namespace graphene { namespace hello_plugin {
 
-        /*
-         * The detail is used to separated the implementation from the interface
-         */
-        namespace detail {
+/*
+ * The detail is used to separated the implementation from the interface
+ */
+namespace detail {
 
-            class hello_plugin_impl {
-            public:
-                hello_plugin_impl();
+class hello_plugin_impl
+{
+   public:
+      hello_plugin_impl();
+      virtual ~hello_plugin_impl();
 
-                virtual ~hello_plugin_impl();
+      virtual std::string plugin_name()const;
+      virtual void plugin_initialize( const boost::program_options::variables_map& options );
+      virtual void plugin_startup();
+      virtual void plugin_shutdown();
 
-                virtual std::string plugin_name() const;
+      // TODO:  Add custom methods here
+};
 
-                virtual void plugin_initialize(const boost::program_options::variables_map &options);
+/**
+ * Constructor Implementation
+ */
+hello_plugin_impl::hello_plugin_impl()
+{
+}
 
-                virtual void plugin_startup();
+/**
+ * Destructor Implementation
+ */
+hello_plugin_impl::~hello_plugin_impl() {}
 
-                virtual void plugin_shutdown();
+/**
+ * Get plugin name Implementation
+ */
+std::string hello_plugin_impl::plugin_name()const
+{
+   return "hello_api";
+}
 
-                // TODO:  Add custom methods here
-            };
+/*
+ * Initialize Implementation
+ */
+void hello_plugin_impl::plugin_initialize( const boost::program_options::variables_map& options )
+{
+   ilog("hello plugin:  plugin_initialize()");
+}
 
-            /**
-             * Constructor Implementation
-             */
-            hello_plugin_impl::hello_plugin_impl() {
-            }
+/*
+ * Plugin Startup implementation
+ */
+void hello_plugin_impl::plugin_startup()
+{
+   ilog("hello plugin:  plugin_startup()");
+}
 
-            /**
-             * Destructor Implementation
-             */
-            hello_plugin_impl::~hello_plugin_impl() {}
+/*
+ * Plugin Shutdown implementation
+ */
+void hello_plugin_impl::plugin_shutdown()
+{
+   ilog("hello plugin:  plugin_shutdown()");
+}
 
-            /**
-             * Get plugin name Implementation
-             */
-            std::string hello_plugin_impl::plugin_name() const {
-                return "hello_api";
-            }
-
-            /*
-             * Initialize Implementation
-             */
-            void hello_plugin_impl::plugin_initialize(const boost::program_options::variables_map &options) {
-                ilog("hello plugin:  plugin_initialize()");
-            }
-
-            /*
-             * Plugin Startup implementation
-             */
-            void hello_plugin_impl::plugin_startup() {
-                ilog("hello plugin:  plugin_startup()");
-            }
-
-    /*
-     * Plugin Shutdown implementation
-     */
-            void hello_plugin_impl::plugin_shutdown() {
-                ilog("hello plugin:  plugin_shutdown()");
-            }
-
-        } /// detail
+} /// detail
 
 /*
  * Now we are done with implementation/detail, let's do the interface (linking
@@ -78,27 +76,31 @@ namespace graphene {
  */
 
 
-        hello_plugin::hello_plugin() :
-                my(new detail::hello_plugin_impl) {
-        }
+hello_plugin::hello_plugin() :
+   my( new detail::hello_plugin_impl )
+{
+}
 
-        hello_plugin::~hello_plugin() {}
+hello_plugin::~hello_plugin() {}
 
-        std::string hello_plugin::plugin_name() const {
-            return my->plugin_name();
-        }
+std::string hello_plugin::plugin_name()const
+{
+   return my->plugin_name();
+}
 
-        void hello_plugin::plugin_initialize(const boost::program_options::variables_map &options) {
-            my->plugin_initialize(options);
-        }
+void hello_plugin::plugin_initialize( const boost::program_options::variables_map& options )
+{
+   my->plugin_initialize( options );
+}
 
-        void hello_plugin::plugin_startup() {
-            my->plugin_startup();
-        }
+void hello_plugin::plugin_startup()
+{
+   my->plugin_startup();
+}
 
-        void hello_plugin::plugin_shutdown() {
-            my->plugin_shutdown();
-        }
+void hello_plugin::plugin_shutdown()
+{
+   my->plugin_shutdown();
+}
 
-    }
-} // graphene::hello_plugin
+} } // graphene::hello_plugin

@@ -1,105 +1,74 @@
-//
-// Created by Alexander Sukhanov on 11/11/17.
-//
+#include <graphene/app/application.hpp>
+#include <graphene/chain/database.hpp>
 
 #include <graphene/hello/hello_api.hpp>
 #include <graphene/hello/hello_plugin.hpp>
 
-#include <string>
-
-namespace graphene {
-    namespace hello_plugin {
+namespace graphene { namespace hello {
 
 /*
  * The detail is used to separated the implementation from the interface
  */
-        namespace detail {
+namespace detail {
 
-            class hello_plugin_impl {
-            public:
-                hello_plugin_impl();
+class hello_api_impl
+{
+   public:
+      hello_api_impl( graphene::app::application& _app );
+      graphene::app::application& app;
+      std::shared_ptr< graphene::hello_plugin::hello_plugin > get_plugin();
 
-                virtual ~hello_plugin_impl();
-
-                virtual std::string plugin_name() const;
-
-                virtual void plugin_initialize(const boost::program_options::variables_map &options);
-
-                virtual void plugin_startup();
-
-                virtual void plugin_shutdown();
-
-                // TODO:  Add custom methods here
-            };
+      // TODO:  Add API methods here
+      uint32_t hello();
+};
 
 /**
  * Constructor Implementation
  */
-            hello_plugin_impl::hello_plugin_impl() {
-            }
-
-/**
- * Destructor Implementation
- */
-            hello_plugin_impl::~hello_plugin_impl() {}
+hello_api_impl::hello_api_impl( graphene::app::application& _app ) : app( _app )
+{}
 
 /**
  * Get plugin name Implementation
  */
-            std::string hello_plugin_impl::plugin_name() const {
-                return "hello_api";
-            }
+std::shared_ptr< graphene::hello_plugin::hello_plugin > hello_api_impl::get_plugin()
+{
+   /// We are loading the hello_plugin's get_plugin all here
+   return app.get_plugin< graphene::hello_plugin::hello_plugin >( "hello" );
+}
 
-/*
- * Initialize Implementation
+/**
+ * Custom call 'hello' implementation
  */
-            void hello_plugin_impl::plugin_initialize(const boost::program_options::variables_map &options) {
-                ilog("hello plugin:  plugin_initialize()");
-            }
+uint32_t hello_api_impl::hello()
+{
+   // Obtain access to the internal database objects
+   std::shared_ptr< graphene::chain::database > db = app.chain_database();
+   // Return the head block number
+   return db->head_block_num();
+}
 
-/*
- * Plugin Startup implementation
- */
-            void hello_plugin_impl::plugin_startup() {
-                ilog("hello plugin:  plugin_startup()");
-            }
-
-/*
- * Plugin Shutdown implementation
- */
-            void hello_plugin_impl::plugin_shutdown() {
-                ilog("hello plugin:  plugin_shutdown()");
-            }
-
-        } /// detail
+} /// detail
 
 /*
  * Now we are done with implementation/detail, let's do the interface (linking
  * implementation)
  */
 
+/*
+ * Plugin constructor implementation
+ */
+hello_api::hello_api( graphene::app::application& app )
+{
+   my = std::make_shared< detail::hello_api_impl >(app);
+}
 
-        hello_plugin::hello_plugin() :
-                my(new detail::hello_plugin_impl) {
-        }
+/*
+ * Custom call 'hello' interface
+ */
+uint32_t hello_api::hello()
+{
+   return my->hello();
+}
 
-        hello_plugin::~hello_plugin() {}
-
-        std::string hello_plugin::plugin_name() const {
-            return my->plugin_name();
-        }
-
-        void hello_plugin::plugin_initialize(const boost::program_options::variables_map &options) {
-            my->plugin_initialize(options);
-        }
-
-        void hello_plugin::plugin_startup() {
-            my->plugin_startup();
-        }
-
-        void hello_plugin::plugin_shutdown() {
-            my->plugin_shutdown();
-        }
-
-    }
-} // graphene::hello_plugin
+} } // graphene::hello

@@ -102,7 +102,7 @@ namespace graphene { namespace app {
        }
        else if( api_name == "hello_api" )
        {
-           _hello_api = std::make_shared< graphene::hello::hello_api >( std::ref(_app) );
+          _hello_api = std::make_shared< graphene::hello::hello_api >( std::ref(_app) );
        }
        else if( api_name == "asset_api" )
        {
@@ -266,16 +266,16 @@ namespace graphene { namespace app {
        return *_asset_api;
     }
 
-    fc::api<graphene::hello::hello_api> login_api::hello() const
-    {
-        FC_ASSERT(_hello_api);
-        return *_hello_api;
-    }
-
     fc::api<graphene::debug_witness::debug_api> login_api::debug() const
     {
        FC_ASSERT(_debug_api);
        return *_debug_api;
+    }
+
+    fc::api<graphene::hello::hello_api> login_api::hello() const
+    {
+       FC_ASSERT(_hello_api);
+       return *_hello_api;
     }
 
     vector<order_history_object> history_api::get_fill_order_history( asset_id_type a, asset_id_type b, uint32_t limit  )const
@@ -329,7 +329,7 @@ namespace graphene { namespace app {
        if( stop.instance.value == 0 && result.size() < limit )
        {
           node = db.find(account_transaction_history_id_type());
-          if( node && node->account == account)
+          if( node )
              result.push_back( node->operation_id(db) );
        }
        return result;
