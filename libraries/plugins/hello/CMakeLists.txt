@@ -3,6 +3,7 @@ file(GLOB HEADERS "include/graphene/hello/*.hpp")
 add_library( graphene_hello
         ${HEADERS}
         hello_plugin.cpp
+        hello_api.cpp
         )
 
 target_link_libraries( graphene_hello graphene_chain graphene_app graphene_db )

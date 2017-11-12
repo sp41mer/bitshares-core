@@ -100,13 +100,13 @@ namespace graphene { namespace app {
        {
           _crypto_api = std::make_shared< crypto_api >();
        }
+       else if( api_name == "hello_api" )
+       {
+           _hello_api = std::make_shared< graphene::hello::hello_api >( std::ref(_app) );
+       }
        else if( api_name == "asset_api" )
        {
           _asset_api = std::make_shared< asset_api >( std::ref( *_app.chain_database() ) );
-       }
-       else if( api_name == "hello_api" )
-       {
-          _hello_api = std::make_shared< graphene::hello::hello_api >( std::ref(_app) );
        }
        else if( api_name == "debug_api" )
        {

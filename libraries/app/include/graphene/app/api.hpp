@@ -32,7 +32,7 @@
 
 #include <graphene/debug_witness/debug_api.hpp>
 
-#include <graphene/hello/hello_api.h>
+#include <graphene/hello/hello_api.hpp>
 
 #include <graphene/net/node.hpp>
 

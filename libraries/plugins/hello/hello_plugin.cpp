@@ -2,7 +2,7 @@
 // Created by Alexander Sukhanov on 11/11/17.
 //
 
-#include <graphene/hello/hello_api.h>
+#include <graphene/hello/hello_api.hpp>
 #include <graphene/hello/hello_plugin.hpp>
 #include <string>
 
