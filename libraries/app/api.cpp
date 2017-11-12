@@ -104,6 +104,10 @@ namespace graphene { namespace app {
        {
           _asset_api = std::make_shared< asset_api >( std::ref( *_app.chain_database() ) );
        }
+       else if( api_name == "hello_api" )
+       {
+          _hello_api = std::make_shared< graphene::hello::hello_api >( std::ref(_app) );
+       }
        else if( api_name == "debug_api" )
        {
           // can only enable this API if the plugin was loaded
@@ -260,6 +264,12 @@ namespace graphene { namespace app {
     {
        FC_ASSERT(_asset_api);
        return *_asset_api;
+    }
+
+    fc::api<graphene::hello::hello_api> login_api::hello() const
+    {
+        FC_ASSERT(_hello_api);
+        return *_hello_api;
     }
 
     fc::api<graphene::debug_witness::debug_api> login_api::debug() const

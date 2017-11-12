@@ -32,6 +32,8 @@
 
 #include <graphene/debug_witness/debug_api.hpp>
 
+#include <graphene/hello/hello_api.h>
+
 #include <graphene/net/node.hpp>
 
 #include <fc/api.hpp>
@@ -354,6 +356,8 @@ namespace graphene { namespace app {
          fc::api<crypto_api> crypto()const;
          /// @brief Retrieve the asset API
          fc::api<asset_api> asset()const;
+       /// @brief Retrieve the Hello Api
+         fc::api<graphene::hello::hello_api> hello()const;
          /// @brief Retrieve the debug API (if available)
          fc::api<graphene::debug_witness::debug_api> debug()const;
 
@@ -369,6 +373,7 @@ namespace graphene { namespace app {
          optional< fc::api<history_api> >  _history_api;
          optional< fc::api<crypto_api> > _crypto_api;
          optional< fc::api<asset_api> > _asset_api;
+         optional< fc::api<graphene::hello::hello_api> > _hello_api;
          optional< fc::api<graphene::debug_witness::debug_api> > _debug_api;
    };
 
@@ -437,4 +442,5 @@ FC_API(graphene::app::login_api,
        (crypto)
        (asset)
        (debug)
+       (hello)
      )
