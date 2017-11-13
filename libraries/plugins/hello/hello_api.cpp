@@ -20,6 +20,7 @@ class hello_api_impl
 
       // TODO:  Add API methods here
       uint32_t hello();
+      std::string hello_denis();
 };
 
 /**
@@ -48,6 +49,11 @@ uint32_t hello_api_impl::hello()
    return db->head_block_num();
 }
 
+std::string  hello_api_impl::hello_denis()
+{
+   return "Hello Denis!";
+}
+
 } /// detail
 
 /*
@@ -69,6 +75,11 @@ hello_api::hello_api( graphene::app::application& app )
 uint32_t hello_api::hello()
 {
    return my->hello();
+}
+
+std::string  hello_api::hello_denis()
+{
+  return my->hello_denis();
 }
 
 } } // graphene::hello

@@ -5,4 +5,4 @@ RUN apt-get install -y autoconf cmake git libboost-all-dev libssl-dev g++
 ADD . /rightchain
 WORKDIR /rightchain
 RUN cmake -DCMAKE_BUILD_TYPE=Release .
-RUN make
+RUN make -j4

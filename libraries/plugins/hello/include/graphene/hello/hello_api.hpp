@@ -2,6 +2,8 @@
 #pragma once
 
 #include <fc/api.hpp>
+#include <string>
+
 
 /*
  * We need this so we can refer to graphene::app::application without including the entire header
@@ -39,6 +41,7 @@ class hello_api
 
       // TODO: Add API methods here
       uint32_t hello();
+      std::string hello_denis();
 
    private:
       /*
@@ -55,4 +58,5 @@ class hello_api
  */
 FC_API( graphene::hello::hello_api,
     (hello)
+    (hello_denis)
 )

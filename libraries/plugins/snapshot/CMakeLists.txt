@@ -1,6 +1,7 @@
 file(GLOB HEADERS "include/graphene/snapshot/*.hpp")
 
 add_library( graphene_snapshot
+             ${HEADERS}
              snapshot.cpp
            )
 
