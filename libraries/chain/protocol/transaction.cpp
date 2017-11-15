@@ -79,6 +79,7 @@ signature_type graphene::chain::signed_transaction::sign(const private_key_type&
    digest_type::encoder enc;
    fc::raw::pack( enc, chain_id );
    fc::raw::pack( enc, *this );
+
    return key.sign_compact(enc.result());
 }
 

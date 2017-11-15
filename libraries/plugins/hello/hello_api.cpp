@@ -51,7 +51,7 @@ uint32_t hello_api_impl::hello()
 
 std::string  hello_api_impl::hello_denis()
 {
-   return "Hello Denis!";
+   return "Hello Danek!";
 }
 
 } /// detail
