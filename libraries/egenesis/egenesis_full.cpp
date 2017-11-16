@@ -287,17 +287,17 @@ static const char genesis_json_array[246][40+1] =
 "min_committee_member_count\": 11,\n    \"mi",
 "n_witness_count\": 11,\n    \"num_special_a",
 "ccounts\": 0,\n    \"num_special_assets\": 0",
-"\n  }\n}\n"
+"\n  }\n}"
 };
 
 chain_id_type get_egenesis_chain_id()
 {
-   return chain_id_type( "30876b9228e993d950d565e2ca9e2e95f9426b3064830ab2f66ada9887a8395f" );
+   return chain_id_type( "343d54d9207489a9ea16a43fdd9754450c5af558b1495f3766ce3abd507834a1" );
 }
 
 void compute_egenesis_json( std::string& result )
 {
-   result.reserve( 9807 );
+   result.reserve( 9806 );
    result.resize(0);
    for( size_t i=0; i<246-1; i++ )
    {
@@ -309,7 +309,7 @@ void compute_egenesis_json( std::string& result )
 
 fc::sha256 get_egenesis_json_hash()
 {
-   return fc::sha256( "30876b9228e993d950d565e2ca9e2e95f9426b3064830ab2f66ada9887a8395f" );
+   return fc::sha256( "343d54d9207489a9ea16a43fdd9754450c5af558b1495f3766ce3abd507834a1" );
 }
 
 } }

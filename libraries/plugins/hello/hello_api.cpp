@@ -3,7 +3,10 @@
 
 #include <graphene/hello/hello_api.hpp>
 #include <graphene/hello/hello_plugin.hpp>
+#include <graphene/wallet/wallet.hpp>
+#include <graphene/app/database_api.hpp>
 
+class account_object;
 namespace graphene { namespace hello {
 
 /*
@@ -21,6 +24,9 @@ class hello_api_impl
       // TODO:  Add API methods here
       uint32_t hello();
       std::string hello_denis();
+      std::string hello_transfer(std::string from, std::string to, std::string amount,
+                                 std::string asset_symbol);
+
 };
 
 /**
@@ -54,6 +60,15 @@ std::string  hello_api_impl::hello_denis()
    return "Hello Danek!";
 }
 
+
+std::string  hello_api_impl::hello_transfer(string from, string to, string amount,
+                                            string asset_symbol)
+    {
+        std::shared_ptr< graphene::chain::database > db = app.chain_database();
+        graphene::app::database_api_impl database_api = new graphene::app::database_api_impl (*db)
+        return from;
+    }
+
 } /// detail
 
 /*
@@ -82,4 +97,11 @@ std::string  hello_api::hello_denis()
   return my->hello_denis();
 }
 
-} } // graphene::hello
+std::string  hello_api::hello_transfer(string from, string to, string amount,
+                                       string asset_symbol)
+{
+    return my->hello_transfer(from, to, amount, asset_symbol);
+}
+
+
+    } } // graphene::hello

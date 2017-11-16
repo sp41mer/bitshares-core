@@ -3,7 +3,9 @@
 
 #include <fc/api.hpp>
 #include <string>
+#include <graphene/app/database_api.hpp>
 
+using namespace std;
 
 /*
  * We need this so we can refer to graphene::app::application without including the entire header
@@ -11,6 +13,16 @@
 namespace graphene { namespace app {
 class application;
 } }
+
+namespace graphene { namespace wallet {
+        class wallet_api;
+    } }
+
+namespace graphene {
+    namespace app {
+        class database_api_impl;
+    }
+}
 
 /*
  * Our basic namespace
@@ -42,6 +54,8 @@ class hello_api
       // TODO: Add API methods here
       uint32_t hello();
       std::string hello_denis();
+      std::string hello_transfer(std::string from, std::string to, std::string amount,
+                                 std::string asset_symbol);
 
    private:
       /*
@@ -59,4 +73,5 @@ class hello_api
 FC_API( graphene::hello::hello_api,
     (hello)
     (hello_denis)
+    (hello_transfer)
 )
