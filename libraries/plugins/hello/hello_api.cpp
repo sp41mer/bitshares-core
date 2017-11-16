@@ -65,7 +65,7 @@ std::string  hello_api_impl::hello_transfer(string from, string to, string amoun
                                             string asset_symbol)
     {
         std::shared_ptr< graphene::chain::database > db = app.chain_database();
-        graphene::app::database_api_impl database_api = new graphene::app::database_api_impl (*db)
+        graphene::app::database_api database_api = *db;
         return from;
     }
 
