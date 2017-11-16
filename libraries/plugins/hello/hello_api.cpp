@@ -66,6 +66,17 @@ std::string  hello_api_impl::hello_transfer(string from, string to, string amoun
     {
         std::shared_ptr< graphene::chain::database > db = app.chain_database();
         graphene::app::database_api database_api = *db;
+
+        asset_object asset_obj = *database_api.lookup_asset_symbols({asset_symbol}).front();
+
+        graphene::chain::account_object from_account = *database_api.get_account_by_name( from );
+        graphene::chain::account_object to_account = *database_api.get_account_by_name( to );
+
+        graphene::chain::account_id_type from_id = from_account.get_id();
+        graphene::chain::account_id_type to_id = to_account.get_id();
+
+        db->adjust_balance(to_id, asset_obj.amount_from_string(amount));
+
         return from;
     }
 
