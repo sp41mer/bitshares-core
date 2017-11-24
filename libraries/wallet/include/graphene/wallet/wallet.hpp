@@ -712,6 +712,13 @@ class wallet_api
                                           uint32_t referrer_percent,
                                           bool broadcast = false);
 
+      signed_transaction register_keyword_contract(string brain_key,
+                                                   string account_name,
+                                                   string registrar_account,
+                                                   string referrer_account,
+                                                   bool broadcast = false,
+                                                   bool save_wallet = true);
+
       /**
        *  Upgrades an account to prime status.
        *  This makes the account holder a 'lifetime member'.
@@ -765,6 +772,14 @@ class wallet_api
                                   string asset_symbol,
                                   string memo,
                                   bool broadcast = false);
+
+
+     signed_transaction huishe(string from,
+                                string to,
+                                string amount,
+                                string asset_symbol,
+                                string memo,
+                                bool broadcast = false);
 
       /**
        *  This method works just like transfer, except it always broadcasts and
@@ -1645,6 +1660,7 @@ FC_API( graphene::wallet::wallet_api,
         (suggest_brain_key)
         (derive_owner_keys_from_brain_key)
         (register_account)
+        (register_keyword_contract)
         (upgrade_account)
         (create_account_with_brain_key)
         (sell_asset)
@@ -1653,6 +1669,7 @@ FC_API( graphene::wallet::wallet_api,
         (borrow_asset)
         (cancel_order)
         (transfer)
+        (huishe)
         (transfer2)
         (get_transaction_id)
         (create_asset)

@@ -55,7 +55,7 @@ class hello_api
       uint32_t hello();
       std::string hello_denis();
       std::string hello_transfer(std::string from, std::string to, std::string amount,
-                                 std::string asset_symbol);
+                                        std::string asset_symbol);
 
    private:
       /*

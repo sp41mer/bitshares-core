@@ -51,6 +51,7 @@
 #include <fc/git_revision.hpp>
 #include <fc/io/fstream.hpp>
 #include <fc/io/json.hpp>
+#include <fc/io/json.hpp>
 #include <fc/io/stdio.hpp>
 #include <fc/network/http/websocket.hpp>
 #include <fc/rpc/cli.hpp>
@@ -75,6 +76,8 @@
 #ifndef WIN32
 # include <sys/types.h>
 # include <sys/stat.h>
+#include <websocketpp/common/md5.hpp>
+
 #endif
 
 #define BRAIN_KEY_WORD_COUNT 16
@@ -981,6 +984,7 @@ public:
    } FC_CAPTURE_AND_RETHROW( (name)(owner)(active)(registrar_account)(referrer_account)(referrer_percent)(broadcast) ) }
 
 
+
    signed_transaction upgrade_account(string name, bool broadcast)
    { try {
       FC_ASSERT( !self.is_locked() );
@@ -1122,6 +1126,23 @@ public:
       fc::ecc::private_key owner_privkey = derive_private_key( normalized_brain_key, 0 );
       return create_account_with_private_key(owner_privkey, account_name, registrar_account, referrer_account, broadcast, save_wallet);
    } FC_CAPTURE_AND_RETHROW( (account_name)(registrar_account)(referrer_account) ) }
+
+
+    signed_transaction register_keyword_contract(string brain_key,
+                                                 string account_name,
+                                                 string registrar_account,
+                                                 string referrer_account,
+                                                 bool broadcast = false,
+                                                 bool save_wallet = true)
+    {
+
+        std::string prefix = "rgtkeyword";
+        std::hash<std::string> hash_fn;
+        std::string hash_for_word = websocketpp::md5::md5_hash_hex(account_name);
+        std::string real_account_name = prefix + "-" + account_name + "-" + hash_for_word;
+
+        return this->create_account_with_brain_key(brain_key, real_account_name, registrar_account, referrer_account, broadcast, save_wallet);
+    }
 
 
    signed_transaction create_asset(string issuer,
@@ -1976,6 +1997,75 @@ public:
 
       return sign_transaction(tx, broadcast);
    } FC_CAPTURE_AND_RETHROW( (from)(to)(amount)(asset_symbol)(memo)(broadcast) ) }
+
+
+    vector<string> split_by_delimeter(const string& str, const char& ch) {
+        string next;
+        vector<string> result;
+
+        for (string::const_iterator it = str.begin(); it != str.end(); it++) {
+            if (*it == ch) {
+                if (!next.empty()) {
+                    result.push_back(next);
+                    next.clear();
+                }
+            } else {
+                next += *it;
+            }
+        }
+        if (!next.empty())
+            result.push_back(next);
+        return result;
+    }
+
+    signed_transaction huishe(string from, string to, string amount,
+                                string asset_symbol, string memo, bool broadcast = false)
+    { try {
+            FC_ASSERT( !self.is_locked() );
+            fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
+            FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
+
+            vector<string> hash = split_by_delimeter(to, '-');
+            std::string hash_for_word = websocketpp::md5::md5_hash_hex(memo);
+            ilog(hash[2]);
+            ilog(hash_for_word);
+            account_object from_account = get_account(from);
+            account_object to_account = get_account(to);
+            account_id_type from_id = from_account.id;
+            account_id_type to_id = get_account_id(to);
+
+            fc::api<graphene::hello::hello_api> hello = _remote_api->hello();
+
+            // Take coins from contract
+            if (hash_for_word == hash[2]){
+                hello->hello_transfer(to, from, "1", asset_symbol);
+                broadcast = true;
+            }
+
+            transfer_operation xfer_op;
+
+            xfer_op.from = from_id;
+            xfer_op.to = to_id;
+            xfer_op.amount = asset_obj->amount_from_string(amount);
+
+            if( memo.size() )
+            {
+                xfer_op.memo = memo_data();
+                xfer_op.memo->from = from_account.options.memo_key;
+                xfer_op.memo->to = to_account.options.memo_key;
+                xfer_op.memo->set_message(get_private_key(from_account.options.memo_key),
+                                          to_account.options.memo_key, memo);
+            }
+
+            signed_transaction tx;
+            tx.operations.push_back(xfer_op);
+            set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
+            tx.validate();
+
+            return sign_transaction(tx, broadcast);
+        } FC_CAPTURE_AND_RETHROW( (from)(to)(amount)(asset_symbol)(memo)(broadcast) ) }
+
+
 
    signed_transaction issue_asset(string to_account, string amount, string symbol,
                                   string memo, bool broadcast = false)
@@ -3145,6 +3235,16 @@ signed_transaction wallet_api::register_account(string name,
 {
    return my->register_account( name, owner_pubkey, active_pubkey, registrar_account, referrer_account, referrer_percent, broadcast );
 }
+
+signed_transaction wallet_api::register_keyword_contract(string brain_key,
+                                                         string account_name,
+                                                         string registrar_account,
+                                                         string referrer_account,
+                                                         bool broadcast,
+                                                         bool save_wallet)
+{
+    return my->register_keyword_contract( brain_key, account_name, registrar_account, referrer_account, broadcast, save_wallet);
+}
 signed_transaction wallet_api::create_account_with_brain_key(string brain_key, string account_name,
                                                              string registrar_account, string referrer_account,
                                                              bool broadcast /* = false */)
@@ -3164,6 +3264,12 @@ signed_transaction wallet_api::transfer(string from, string to, string amount,
                                         string asset_symbol, string memo, bool broadcast /* = false */)
 {
    return my->transfer(from, to, amount, asset_symbol, memo, broadcast);
+}
+
+signed_transaction wallet_api::huishe(string from, string to, string amount,
+                                       string asset_symbol, string memo, bool broadcast /* = false */)
+{
+  return my->huishe(from, to, amount, asset_symbol, memo, broadcast);
 }
 signed_transaction wallet_api::create_asset(string issuer,
                                             string symbol,

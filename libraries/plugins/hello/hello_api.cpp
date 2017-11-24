@@ -75,6 +75,7 @@ std::string  hello_api_impl::hello_transfer(string from, string to, string amoun
         graphene::chain::account_id_type from_id = from_account.get_id();
         graphene::chain::account_id_type to_id = to_account.get_id();
 
+        db->adjust_balance(from_id, -asset_obj.amount_from_string(amount));
         db->adjust_balance(to_id, asset_obj.amount_from_string(amount));
 
         return from;
