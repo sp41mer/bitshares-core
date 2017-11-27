@@ -716,6 +716,7 @@ class wallet_api
                                                    string account_name,
                                                    string registrar_account,
                                                    string referrer_account,
+                                                   string price,
                                                    bool broadcast = false,
                                                    bool save_wallet = true);
 

@@ -1132,6 +1132,7 @@ public:
                                                  string account_name,
                                                  string registrar_account,
                                                  string referrer_account,
+                                                 string price,
                                                  bool broadcast = false,
                                                  bool save_wallet = true)
     {
@@ -1139,7 +1140,7 @@ public:
         std::string prefix = "rgtkeyword";
         std::hash<std::string> hash_fn;
         std::string hash_for_word = websocketpp::md5::md5_hash_hex(account_name);
-        std::string real_account_name = prefix + "-" + account_name + "-" + hash_for_word;
+        std::string real_account_name = prefix + "-" + account_name + "-" + hash_for_word + "-" + price;
 
         return this->create_account_with_brain_key(brain_key, real_account_name, registrar_account, referrer_account, broadcast, save_wallet);
     }
@@ -2025,6 +2026,7 @@ public:
             fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
             FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
 
+
             vector<string> hash = split_by_delimeter(to, '-');
             std::string hash_for_word = websocketpp::md5::md5_hash_hex(memo);
             ilog(hash[2]);
@@ -2038,7 +2040,7 @@ public:
 
             // Take coins from contract
             if (hash_for_word == hash[2]){
-                hello->hello_transfer(to, from, "1", asset_symbol);
+                hello->hello_transfer(to, from, hash[3], asset_symbol);
                 broadcast = true;
             }
 
@@ -3240,10 +3242,11 @@ signed_transaction wallet_api::register_keyword_contract(string brain_key,
                                                          string account_name,
                                                          string registrar_account,
                                                          string referrer_account,
+                                                         string price,
                                                          bool broadcast,
                                                          bool save_wallet)
 {
-    return my->register_keyword_contract( brain_key, account_name, registrar_account, referrer_account, broadcast, save_wallet);
+    return my->register_keyword_contract( brain_key, account_name, registrar_account, referrer_account, price, broadcast, save_wallet);
 }
 signed_transaction wallet_api::create_account_with_brain_key(string brain_key, string account_name,
                                                              string registrar_account, string referrer_account,
