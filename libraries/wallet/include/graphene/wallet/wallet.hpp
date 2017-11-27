@@ -775,7 +775,7 @@ class wallet_api
                                   bool broadcast = false);
 
 
-     signed_transaction huishe(string from,
+     signed_transaction action_keyword_contract(string from,
                                 string to,
                                 string amount,
                                 string asset_symbol,
@@ -1670,7 +1670,7 @@ FC_API( graphene::wallet::wallet_api,
         (borrow_asset)
         (cancel_order)
         (transfer)
-        (huishe)
+        (action_keyword_contract)
         (transfer2)
         (get_transaction_id)
         (create_asset)

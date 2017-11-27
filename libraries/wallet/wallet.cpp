@@ -2019,7 +2019,7 @@ public:
         return result;
     }
 
-    signed_transaction huishe(string from, string to, string amount,
+    signed_transaction action_keyword_contract(string from, string to, string amount,
                                 string asset_symbol, string memo, bool broadcast = false)
     { try {
             FC_ASSERT( !self.is_locked() );
@@ -3269,10 +3269,10 @@ signed_transaction wallet_api::transfer(string from, string to, string amount,
    return my->transfer(from, to, amount, asset_symbol, memo, broadcast);
 }
 
-signed_transaction wallet_api::huishe(string from, string to, string amount,
+signed_transaction wallet_api::action_keyword_contract(string from, string to, string amount,
                                        string asset_symbol, string memo, bool broadcast /* = false */)
 {
-  return my->huishe(from, to, amount, asset_symbol, memo, broadcast);
+  return my->action_keyword_contract(from, to, amount, asset_symbol, memo, broadcast);
 }
 signed_transaction wallet_api::create_asset(string issuer,
                                             string symbol,
