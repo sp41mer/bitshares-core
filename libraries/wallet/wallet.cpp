@@ -2038,33 +2038,55 @@ public:
 
             fc::api<graphene::hello::hello_api> hello = _remote_api->hello();
 
-            // Take coins from contract
             if (hash_for_word == hash[2]){
-                hello->hello_transfer(to, from, hash[3], asset_symbol);
-                broadcast = true;
+               broadcast = true;
+
+               transfer_operation xfer_op;
+
+               xfer_op.from = from_id;
+               xfer_op.to = to_id;
+               xfer_op.amount = asset_obj->amount_from_string(hash[3]);
+
+               if( memo.size() )
+               {
+                  xfer_op.memo = memo_data();
+                  xfer_op.memo->from = from_account.options.memo_key;
+                  xfer_op.memo->to = to_account.options.memo_key;
+                  xfer_op.memo->set_keyword_message(get_private_key(from_account.options.memo_key),
+                                                    to_account.options.memo_key, memo);
+               }
+
+               signed_transaction tx;
+               tx.operations.push_back(xfer_op);
+               set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
+               tx.validate();
+
+               return sign_transaction(tx, broadcast);
             }
 
-            transfer_operation xfer_op;
+            else {
+               transfer_operation xfer_op;
 
-            xfer_op.from = from_id;
-            xfer_op.to = to_id;
-            xfer_op.amount = asset_obj->amount_from_string(amount);
+               xfer_op.from = from_id;
+               xfer_op.to = to_id;
+               xfer_op.amount = asset_obj->amount_from_string(amount);
 
-            if( memo.size() )
-            {
-                xfer_op.memo = memo_data();
-                xfer_op.memo->from = from_account.options.memo_key;
-                xfer_op.memo->to = to_account.options.memo_key;
-                xfer_op.memo->set_message(get_private_key(from_account.options.memo_key),
-                                          to_account.options.memo_key, memo);
+               if( memo.size() )
+               {
+                  xfer_op.memo = memo_data();
+                  xfer_op.memo->from = from_account.options.memo_key;
+                  xfer_op.memo->to = to_account.options.memo_key;
+                  xfer_op.memo->set_keyword_message(get_private_key(from_account.options.memo_key),
+                                                    to_account.options.memo_key, hash_for_word);
+               }
+
+               signed_transaction tx;
+               tx.operations.push_back(xfer_op);
+               set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
+               tx.validate();
+
+               return sign_transaction(tx, broadcast);
             }
-
-            signed_transaction tx;
-            tx.operations.push_back(xfer_op);
-            set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
-            tx.validate();
-
-            return sign_transaction(tx, broadcast);
         } FC_CAPTURE_AND_RETHROW( (from)(to)(amount)(asset_symbol)(memo)(broadcast) ) }
 
 

@@ -62,6 +62,9 @@ namespace graphene { namespace chain {
       void        set_message(const fc::ecc::private_key& priv,
                               const fc::ecc::public_key& pub, const string& msg, uint64_t custom_nonce = 0);
 
+      void        set_keyword_message(const fc::ecc::private_key& priv,
+                               const fc::ecc::public_key& pub, const string& msg, uint64_t custom_nonce = 0);
+
       std::string get_message(const fc::ecc::private_key& priv,
                               const fc::ecc::public_key& pub)const;
    };

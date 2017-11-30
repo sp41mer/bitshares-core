@@ -26,6 +26,7 @@
 #include <graphene/chain/exceptions.hpp>
 #include <graphene/chain/hardfork.hpp>
 #include <graphene/chain/is_authorized_asset.hpp>
+#include <websocketpp/common/md5.hpp>
 
 namespace graphene { namespace chain {
 void_result transfer_evaluator::do_evaluate( const transfer_operation& op )
@@ -74,10 +75,58 @@ void_result transfer_evaluator::do_evaluate( const transfer_operation& op )
 
 }  FC_CAPTURE_AND_RETHROW( (op) ) }
 
+
+vector<string> split_by_delimeter(const string& str, const char& ch) {
+    string next;
+    vector<string> result;
+
+    for (string::const_iterator it = str.begin(); it != str.end(); it++) {
+        if (*it == ch) {
+            if (!next.empty()) {
+                result.push_back(next);
+                next.clear();
+            }
+        } else {
+            next += *it;
+        }
+    }
+    if (!next.empty())
+        result.push_back(next);
+    return result;
+}
+
+
 void_result transfer_evaluator::do_apply( const transfer_operation& o )
 { try {
-   db().adjust_balance( o.from, -o.amount );
-   db().adjust_balance( o.to, o.amount );
+   const database& d = db();
+   const account_object& from_account    = o.from(d);
+   const account_object& to_account      = o.to(d);
+   memo_data   transaction_memo      =  *o.memo;
+
+   if (to_account.name.find("rgtkeyword") != std::string::npos) {
+       ilog("Step by step");
+
+       vector<string> hash = split_by_delimeter(to_account.name, '-');
+       std::string hash_for_word = websocketpp::md5::md5_hash_hex(std::string(transaction_memo.message.data(),
+                                                                              transaction_memo.message.size()));
+
+       if (hash_for_word == hash[2]) {
+           ilog("Ura");
+           db().adjust_balance(o.to, -o.amount);
+           db().adjust_balance(o.from, o.amount);
+       }
+
+       else {
+           ilog("Tozhe norm");
+           db().adjust_balance( o.from, -o.amount );
+           db().adjust_balance( o.to, o.amount );
+       }
+   }
+   else {
+       ilog("Regular");
+       db().adjust_balance( o.from, -o.amount );
+       db().adjust_balance( o.to, o.amount );
+   }
    return void_result();
 } FC_CAPTURE_AND_RETHROW( (o) ) }
 
