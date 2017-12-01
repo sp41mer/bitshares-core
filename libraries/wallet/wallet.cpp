@@ -121,6 +121,7 @@ public:
    std::string operator()(const T& op)const;
 
    std::string operator()(const transfer_operation& op)const;
+   std::string operator()(const keyword_contract_operation& op)const;
    std::string operator()(const transfer_from_blind_operation& op)const;
    std::string operator()(const transfer_to_blind_operation& op)const;
    std::string operator()(const account_create_operation& op)const;
@@ -2041,7 +2042,7 @@ public:
             if (hash_for_word == hash[2]){
                broadcast = true;
 
-               transfer_operation xfer_op;
+               keyword_contract_operation xfer_op;
 
                xfer_op.from = from_id;
                xfer_op.to = to_id;
@@ -2756,6 +2757,40 @@ string operation_printer::operator()(const transfer_operation& op) const
    fee(op.fee);
    return memo;
 }
+
+string operation_printer::operator()(const keyword_contract_operation& op) const
+ {
+    out << "Keyword contract" << wallet.get_account(op.to).name
+        << "activated by" << wallet.get_account(op.from).name;
+    std::string memo;
+    if( op.memo )
+    {
+       if( wallet.is_locked() )
+       {
+          out << " -- Unlock wallet to see memo.";
+       } else {
+          try {
+             FC_ASSERT(wallet._keys.count(op.memo->to) || wallet._keys.count(op.memo->from), "Memo is encrypted to a key ${to} or ${from} not in this wallet.", ("to", op.memo->to)("from",op.memo->from));
+             if( wallet._keys.count(op.memo->to) ) {
+                auto my_key = wif_to_key(wallet._keys.at(op.memo->to));
+                FC_ASSERT(my_key, "Unable to recover private key to decrypt memo. Wallet may be corrupted.");
+                memo = op.memo->get_message(*my_key, op.memo->from);
+                out << " -- Memo: " << memo;
+             } else {
+                auto my_key = wif_to_key(wallet._keys.at(op.memo->from));
+                FC_ASSERT(my_key, "Unable to recover private key to decrypt memo. Wallet may be corrupted.");
+                memo = op.memo->get_message(*my_key, op.memo->to);
+                out << " -- Memo: " << memo;
+             }
+          } catch (const fc::exception& e) {
+             out << " -- could not decrypt memo";
+             elog("Error when decrypting memo: ${e}", ("e", e.to_detail_string()));
+          }
+       }
+    }
+    fee(op.fee);
+    return memo;
+ }
 
 std::string operation_printer::operator()(const account_create_operation& op) const
 {

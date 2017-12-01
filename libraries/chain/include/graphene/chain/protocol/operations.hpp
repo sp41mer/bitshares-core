@@ -34,6 +34,7 @@
 #include <graphene/chain/protocol/market.hpp>
 #include <graphene/chain/protocol/proposal.hpp>
 #include <graphene/chain/protocol/transfer.hpp>
+#include <graphene/chain/protocol/keyword_contract.hpp>
 #include <graphene/chain/protocol/vesting.hpp>
 #include <graphene/chain/protocol/withdraw_permission.hpp>
 #include <graphene/chain/protocol/witness.hpp>
@@ -48,6 +49,7 @@ namespace graphene { namespace chain {
     */
    typedef fc::static_variant<
             transfer_operation,
+            keyword_contract_operation,
             limit_order_create_operation,
             limit_order_cancel_operation,
             call_order_update_operation,

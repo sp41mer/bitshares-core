@@ -57,6 +57,7 @@
 #include <graphene/chain/market_evaluator.hpp>
 #include <graphene/chain/proposal_evaluator.hpp>
 #include <graphene/chain/transfer_evaluator.hpp>
+#include <graphene/chain/keyword_contract_evaluator.hpp>
 #include <graphene/chain/vesting_balance_evaluator.hpp>
 #include <graphene/chain/withdraw_permission_evaluator.hpp>
 #include <graphene/chain/witness_evaluator.hpp>
@@ -152,6 +153,7 @@ void database::initialize_evaluators()
    register_evaluator<call_order_update_evaluator>();
    register_evaluator<bid_collateral_evaluator>();
    register_evaluator<transfer_evaluator>();
+   register_evaluator<keyword_contract_evaluator>();
    register_evaluator<override_transfer_evaluator>();
    register_evaluator<asset_fund_fee_pool_evaluator>();
    register_evaluator<asset_publish_feeds_evaluator>();

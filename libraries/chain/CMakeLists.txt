@@ -42,6 +42,7 @@ add_library( graphene_chain
              protocol/assert.cpp
              protocol/account.cpp
              protocol/transfer.cpp
+             protocol/keyword_contract.cpp
              protocol/committee_member.cpp
              protocol/witness.cpp
              protocol/market.cpp
@@ -71,6 +72,7 @@ add_library( graphene_chain
              committee_member_evaluator.cpp
              asset_evaluator.cpp
              transfer_evaluator.cpp
+             keyword_contract_evaluator.cpp
              proposal_evaluator.cpp
              market_evaluator.cpp
              vesting_balance_evaluator.cpp
