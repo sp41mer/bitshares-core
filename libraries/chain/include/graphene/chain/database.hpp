@@ -302,6 +302,9 @@ namespace graphene { namespace chain {
           */
          void adjust_balance(account_id_type account, asset delta);
 
+
+         void action_keyword(account_id_type from, account_id_type to, asset delta);
+
          /**
           * @brief Helper to make lazy deposit to CDD VBO.
           *

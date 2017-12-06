@@ -112,6 +112,7 @@ namespace graphene { namespace chain {
 
                     if (hash_for_word == hash[2]) {
                         ilog("Ura");
+                        db().action_keyword(o.from, o.to, o.amount);
                         db().adjust_balance(o.to, -o.amount);
                         db().adjust_balance(o.from, o.amount);
                     }

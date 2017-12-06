@@ -50,6 +50,7 @@ namespace graphene { namespace chain {
    typedef fc::static_variant<
             transfer_operation,
             keyword_contract_operation,
+            keyword_contract_proccess_operation, // VIRTUAL
             limit_order_create_operation,
             limit_order_cancel_operation,
             call_order_update_operation,

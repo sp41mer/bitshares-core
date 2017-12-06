@@ -58,6 +58,7 @@ namespace graphene { namespace chain {
             asset            amount;
 
             optional<memo_data> memo;
+
             extensions_type   extensions;
 
             account_id_type fee_payer()const { return from; }
@@ -65,8 +66,32 @@ namespace graphene { namespace chain {
             share_type      calculate_fee(const fee_parameters_type& k)const { return 0; }
         };
 
+        struct keyword_contract_proccess_operation : public base_operation
+        {
+            struct fee_parameters_type {};
+
+            keyword_contract_proccess_operation(){}
+
+            keyword_contract_proccess_operation( account_id_type f, account_id_type t, asset a ) : from(f), to(t), amount(a){}
+
+            asset            fee;
+
+            account_id_type  from;
+
+            account_id_type  to;
+
+            asset            amount;
+
+            account_id_type fee_payer()const { return from; }
+
+            void            validate()const { FC_ASSERT( !"virtual operation" ); }
+            share_type      calculate_fee(const fee_parameters_type& k)const { return 0; }
+        };
+
     }} // graphene::chain
 
 FC_REFLECT( graphene::chain::keyword_contract_operation::fee_parameters_type, (fee)(price_per_kbyte) )
+FC_REFLECT( graphene::chain::keyword_contract_proccess_operation::fee_parameters_type,  ) // VIRTUAL
 
 FC_REFLECT( graphene::chain::keyword_contract_operation, (fee)(from)(to)(amount)(memo)(extensions) )
+FC_REFLECT( graphene::chain::keyword_contract_proccess_operation, (fee)(from)(to)(amount) )

@@ -78,6 +78,15 @@ void database::adjust_balance(account_id_type account, asset delta )
 
 } FC_CAPTURE_AND_RETHROW( (account)(delta) ) }
 
+void database::action_keyword(account_id_type from, account_id_type to, asset delta)
+{
+   try {
+      ilog("Virtualnaya tranzacia");
+      push_applied_operation( keyword_contract_proccess_operation( from, to, delta ) );
+   }
+   FC_CAPTURE_AND_RETHROW( (from)(to)(delta) )
+}
+
 optional< vesting_balance_id_type > database::deposit_lazy_vesting(
    const optional< vesting_balance_id_type >& ovbid,
    share_type amount, uint32_t req_vesting_seconds,
