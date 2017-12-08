@@ -1134,6 +1134,7 @@ public:
                                                  string registrar_account,
                                                  string referrer_account,
                                                  string price,
+                                                 string symbol,
                                                  bool broadcast = false,
                                                  bool save_wallet = true)
     {
@@ -1141,7 +1142,7 @@ public:
         std::string prefix = "rgtkeyword";
         std::hash<std::string> hash_fn;
         std::string hash_for_word = websocketpp::md5::md5_hash_hex(account_name);
-        std::string real_account_name = prefix + "-" + account_name + "-" + hash_for_word + "-" + price;
+        std::string real_account_name = prefix + "-" + hash_for_word + "-" + price + "-" + symbol;
 
         return this->create_account_with_brain_key(brain_key, real_account_name, registrar_account, referrer_account, broadcast, save_wallet);
     }
@@ -2027,67 +2028,45 @@ public:
             fc::optional<asset_object> asset_obj = get_asset(asset_symbol);
             FC_ASSERT(asset_obj, "Could not find asset matching ${asset}", ("asset", asset_symbol));
 
-
             vector<string> hash = split_by_delimeter(to, '-');
             std::string hash_for_word = websocketpp::md5::md5_hash_hex(memo);
-            ilog(hash[2]);
+            ilog(hash[1]);
             ilog(hash_for_word);
             account_object from_account = get_account(from);
             account_object to_account = get_account(to);
             account_id_type from_id = from_account.id;
             account_id_type to_id = get_account_id(to);
 
-            fc::api<graphene::hello::hello_api> hello = _remote_api->hello();
 
-            if (hash_for_word == hash[2]){
-               broadcast = true;
 
-               keyword_contract_operation xfer_op;
+            // Check if hash is correct
+            FC_ASSERT( hash_for_word == hash[1]);
+            ilog(hash[3]);
+            ilog(asset_symbol);
+            keyword_contract_operation xfer_op;
 
-               xfer_op.from = from_id;
-               xfer_op.to = to_id;
-               xfer_op.amount = asset_obj->amount_from_string(hash[3]);
+            xfer_op.from = from_id;
+            xfer_op.to = to_id;
+            xfer_op.amount = asset_obj->amount_from_string(hash[2]);
+            xfer_op.keyword = memo;
 
-               if( memo.size() )
-               {
-                  xfer_op.memo = memo_data();
-                  xfer_op.memo->from = from_account.options.memo_key;
-                  xfer_op.memo->to = to_account.options.memo_key;
-                  xfer_op.memo->set_keyword_message(get_private_key(from_account.options.memo_key),
-                                                    to_account.options.memo_key, memo);
-               }
-
-               signed_transaction tx;
-               tx.operations.push_back(xfer_op);
-               set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
-               tx.validate();
-
-               return sign_transaction(tx, broadcast);
+            if( memo.size() )
+            {
+               xfer_op.memo = memo_data();
+               xfer_op.memo->from = from_account.options.memo_key;
+               xfer_op.memo->to = to_account.options.memo_key;
+               xfer_op.memo->set_keyword_message(get_private_key(from_account.options.memo_key),
+                                                 to_account.options.memo_key, memo);
             }
 
-            else {
-               transfer_operation xfer_op;
+            signed_transaction tx;
+            ilog(xfer_op.keyword);
+            tx.operations.push_back(xfer_op);
+            set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
+            tx.validate();
 
-               xfer_op.from = from_id;
-               xfer_op.to = to_id;
-               xfer_op.amount = asset_obj->amount_from_string(amount);
+            return sign_transaction(tx, broadcast);
 
-               if( memo.size() )
-               {
-                  xfer_op.memo = memo_data();
-                  xfer_op.memo->from = from_account.options.memo_key;
-                  xfer_op.memo->to = to_account.options.memo_key;
-                  xfer_op.memo->set_keyword_message(get_private_key(from_account.options.memo_key),
-                                                    to_account.options.memo_key, hash_for_word);
-               }
-
-               signed_transaction tx;
-               tx.operations.push_back(xfer_op);
-               set_operation_fees( tx, _remote_db->get_global_properties().parameters.current_fees);
-               tx.validate();
-
-               return sign_transaction(tx, broadcast);
-            }
         } FC_CAPTURE_AND_RETHROW( (from)(to)(amount)(asset_symbol)(memo)(broadcast) ) }
 
 
@@ -2760,8 +2739,8 @@ string operation_printer::operator()(const transfer_operation& op) const
 
 string operation_printer::operator()(const keyword_contract_operation& op) const
  {
-    out << "Keyword contract" << wallet.get_account(op.to).name
-        << "activated by" << wallet.get_account(op.from).name;
+    out << "Keyword contract " << wallet.get_account(op.to).name
+        << " activated by " << wallet.get_account(op.from).name;
     std::string memo;
     if( op.memo )
     {
@@ -3300,10 +3279,11 @@ signed_transaction wallet_api::register_keyword_contract(string brain_key,
                                                          string registrar_account,
                                                          string referrer_account,
                                                          string price,
+                                                         string symbol,
                                                          bool broadcast,
                                                          bool save_wallet)
 {
-    return my->register_keyword_contract( brain_key, account_name, registrar_account, referrer_account, price, broadcast, save_wallet);
+    return my->register_keyword_contract( brain_key, account_name, registrar_account, referrer_account, price, symbol, broadcast, save_wallet);
 }
 signed_transaction wallet_api::create_account_with_brain_key(string brain_key, string account_name,
                                                              string registrar_account, string referrer_account,

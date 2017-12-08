@@ -14,6 +14,7 @@ add_library( graphene_app
 # need to link graphene_debug_witness because plugins aren't sufficiently isolated #246
 target_link_libraries(
     graphene_app
+    graphene_chain
     graphene_market_history
     graphene_account_history
     graphene_hello

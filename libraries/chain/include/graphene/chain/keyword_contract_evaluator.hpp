@@ -37,6 +37,13 @@ namespace graphene {
 
             void_result do_evaluate( const keyword_contract_operation& o );
             void_result do_apply( const keyword_contract_operation& o );
+
+
+            // Custom methods for db
+            vector<string> split_by_delimeter(const string& str, const char& ch);
+            asset_object get_asset(string asset_symbol_or_id)const;
+            optional<asset_object> find_asset(string asset_symbol_or_id)const;
+            vector<optional<asset_object>> lookup_asset_symbols(const vector<string>& symbols_or_ids)const;
         };
 
     }

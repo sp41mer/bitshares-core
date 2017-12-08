@@ -49,17 +49,21 @@ namespace graphene { namespace chain {
                 uint32_t price_per_kbyte = 10 * GRAPHENE_BLOCKCHAIN_PRECISION; /// only required for large memos.
             };
 
-            asset            fee;
+            asset                   fee;
 
-            account_id_type  from;
+            account_id_type         from;
 
-            account_id_type  to;
+            account_id_type         to;
 
-            asset            amount;
+            asset                   amount;
 
-            optional<memo_data> memo;
+            std::string                  keyword;
 
-            extensions_type   extensions;
+            optional<memo_data>     memo;
+
+            extensions_type         extensions;
+
+
 
             account_id_type fee_payer()const { return from; }
             void            validate()const;
